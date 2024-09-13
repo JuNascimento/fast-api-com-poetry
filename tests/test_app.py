@@ -102,8 +102,40 @@ def test_delete_user_deve_retornar_not_found_se_nao_tiver_id(client):
     assert response.json() == {'detail': 'User not found'}
 
 
-def test_delete_user_deve_retornar_ok_se_nao_tiver_user(client):
+def test_delete_user_deve_retornar_ok_se_tiver_user(client):
     response = client.delete('/users/1')
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {'message': 'User deleted'}
+
+
+def test_get_user_deve_retornar_not_found_se_nao_tiver_user(client):
+    response = client.get('/users/10')
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'User not found'}
+
+
+def test_get_user_deve_retornar_not_found_se_nao_tiver_id(client):
+    response = client.get('/users/0')
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'User not found'}
+
+
+def test_get_user_deve_retornar_ok_se_tiver_user(client):
+    usuario_a_ser_criado = {
+        'username': 'Julia',
+        'email': 'ju.araujo11@yahoo.com.br',
+        'password': '1234globo',
+    }
+    usuario_criado = {
+        'username': 'Julia',
+        'email': 'ju.araujo11@yahoo.com.br',
+    }
+
+    response = client.post('/users/', json=usuario_a_ser_criado)
+    response = client.get('/users/1')
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == usuario_criado
